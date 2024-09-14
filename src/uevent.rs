@@ -4,7 +4,6 @@ use std::collections::HashMap;
 use std::os::unix::io::{RawFd, AsRawFd};
 use libc;
 use nix::sys::socket::{socket, bind, recvfrom, AddressFamily, SockType};
-use nix::sys::socket::SockaddrLike;
 use nix::sys::socket::NetlinkAddr;
 use nix::sys::socket::SockFlag;
 use nix::sys::socket::SockProtocol;

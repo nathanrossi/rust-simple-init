@@ -12,3 +12,7 @@ libc = "0.2.78"
 #mio = { version = "0.7", features = ["os-poll", "os-util"] }
 mio = { version = "0.6", features = [] }
 futures = "0.3"
+
+[[example]]
+name = "demo"
+

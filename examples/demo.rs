@@ -1,19 +1,18 @@
 use std::io;
 use std::net::Ipv4Addr;
 
-mod lib;
-use lib::configfs;
-use lib::runtime::Runtime;
-use lib::service::ServiceManager;
-use lib::services;
-use services::process::ProcessService;
-use services::mount;
-use services::console::ConsoleService;
-use services::network;
-use services::network::NetworkDeviceService;
-use services::dev::DeviceManagerService;
-use services::openssh::SSHService;
-use lib::logging::Logger;
+use rust_simple_init::configfs;
+use rust_simple_init::runtime::Runtime;
+use rust_simple_init::service::ServiceManager;
+use rust_simple_init::services;
+use rust_simple_init::services::process::ProcessService;
+use rust_simple_init::services::mount;
+use rust_simple_init::services::console::ConsoleService;
+use rust_simple_init::services::network;
+use rust_simple_init::services::network::NetworkDeviceService;
+use rust_simple_init::services::dev::DeviceManagerService;
+use rust_simple_init::services::openssh::SSHService;
+use rust_simple_init::logging::Logger;
 
 pub fn main() -> std::result::Result<(), Box<dyn std::error::Error>>
 {
