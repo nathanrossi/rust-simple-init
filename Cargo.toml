@@ -16,3 +16,6 @@ futures = "0.3"
 [[example]]
 name = "demo"
 
+[[example]]
+name = "bootloader"
+

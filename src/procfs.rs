@@ -46,6 +46,20 @@ pub fn mounts_from_string(data : &str) -> SysfsEntryIter<&[u8], MountEntry>
 	return SysfsEntryIter::from_string(data);
 }
 
+pub fn device_mounted<P: AsRef<std::path::Path>>(device : P) -> bool {
+	if let Some(device) = device.as_ref().to_str() {
+		if let Ok(mut entries) = mounts() {
+			return entries.any(|e| {
+					if e.device == device {
+						return true;
+					}
+					return false;
+				});
+		}
+	}
+	return false;
+}
+
 pub fn mounted(point : &str, device : Option<&str>, fstype : Option<&str>) -> bool
 {
 	if let Ok(mut entries) = mounts() {

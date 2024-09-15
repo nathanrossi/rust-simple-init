@@ -1,5 +1,7 @@
 use std::io;
 use std::io::{BufRead, Read, BufReader};
+use std::path::Path;
+use std::path::PathBuf;
 
 pub trait SysfsEntryParsable<T>
 {
@@ -62,7 +64,7 @@ impl<T: SysfsEntryParsable<T>> SysfsEntryIter<&[u8], T>
 	}
 }
 
-pub fn read_file<P: AsRef<std::path::Path>>(path : P) -> Option<String>
+pub fn read_file<P: AsRef<Path>>(path : P) -> Option<String>
 {
 	if let Ok(content) = std::fs::read_to_string(path) {
 		return Some(content);
@@ -70,7 +72,7 @@ pub fn read_file<P: AsRef<std::path::Path>>(path : P) -> Option<String>
 	return None;
 }
 
-pub fn read_line_file<P: AsRef<std::path::Path>>(path : P) -> Option<String>
+pub fn read_line_file<P: AsRef<Path>>(path : P) -> Option<String>
 {
 	if let Ok(content) = std::fs::read_to_string(path) {
 		if let Some(line) = content.lines().next() {
@@ -78,4 +80,50 @@ pub fn read_line_file<P: AsRef<std::path::Path>>(path : P) -> Option<String>
 		}
 	}
 	return None;
+}
+
+pub fn read_link<P: AsRef<Path>>(path : P) -> Option<PathBuf> {
+	if let Ok(path) = std::fs::read_link(path) {
+		return Some(PathBuf::from(path));
+	}
+	return None;
+}
+
+pub fn read_link_file_name<P: AsRef<Path>>(path : P) -> Option<String> {
+	if let Ok(path) = std::fs::read_link(path) {
+		if let Some(filename) = PathBuf::from(path).file_name() {
+			if let Some(filename) = filename.to_str() {
+				return Some(filename.to_owned());
+			}
+		}
+	}
+	return None;
+}
+
+fn path_has_subdir<P: AsRef<Path>>(path : P, subdir : &str) -> bool {
+	if let Ok(entries) = path.as_ref().read_dir() {
+		for i in entries {
+			if let Ok(entry) = i {
+				if entry.file_name() == subdir {
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+pub fn walk_path_has_subdir<P: AsRef<Path>>(path : P, subdir : &str) -> Option<PathBuf> {
+	let mut base = path.as_ref().to_path_buf();
+	loop {
+		if path_has_subdir(&base, subdir) {
+			return Some(base);
+		}
+
+		if base.pop() {
+			// check the next parent
+			continue;
+		}
+		return None;
+	}
 }

@@ -26,6 +26,15 @@ pub fn netlink_add_group(fd : std::os::unix::io::RawFd, group : i32) -> Result<(
 	return Ok(());
 }
 
+#[derive(Debug, PartialEq)]
+pub enum EventAction
+{
+	Add,
+	Remove,
+	Change,
+	Unknown,
+}
+
 #[derive(Debug)]
 pub struct EventData
 {
@@ -41,6 +50,18 @@ impl EventData
 			return Some(&value);
 		}
 		return None;
+	}
+
+	pub fn action(&self) -> EventAction {
+		if let Some(action) = self.get("ACTION") {
+			match action {
+				"add" => { return EventAction::Add; },
+				"remove" => { return EventAction::Remove; },
+				"change" => { return EventAction::Change; },
+				_ => { return EventAction::Unknown; }
+			}
+		}
+		return EventAction::Unknown;
 	}
 
 	pub fn devpath(&self) -> Option<&str>
